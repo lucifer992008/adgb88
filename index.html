@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ADGB</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('imagen/fondo.jpg'); /* <-- CAMBIA ESTA RUTA */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: rgb(170, 173, 171);
+      overflow: hidden;
+    }
+
+    .pantalla {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      backdrop-filter: blur(4px);
+      transition: opacity 1s ease;
+    }
+
+    .contenido {
+      display: none;
+      background: linear-gradient(to right, rgba(15,32,39,0.85), rgba(32,58,67,0.85), rgba(44,83,100,0.85));
+      color: white;
+      padding: 50px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    h1 {
+      font-size: 80px;
+      animation: colorChange 3s infinite alternate;
+    }
+
+    @keyframes colorChange {
+      0% { color: #ff0000; }
+      25% { color: #00ff00; }
+      50% { color: #0000ff; }
+      75% { color: #ffff00; }
+      100% { color: #ff00ff; }
+    }
+
+    .start-btn {
+      margin-top: 40px;
+      padding: 15px 40px;
+      font-size: 24px;
+      border: none;
+      border-radius: 10px;
+      background: white;
+      color: black;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+      70% { box-shadow: 0 0 0 20px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    button {
+      background: #00c6ff;
+      border: none;
+      padding: 10px;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 5px;
+      animation: pulse 2s infinite;
+    }
+
+    .solicitud {
+      background-color: #333;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .basurero {
+      cursor: pointer;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pantalla de Bienvenida -->
+  <div class="pantalla" id="pantallaInicio">
+    <h1>Bienvenido ADGB</h1>
+    <button class="start-btn" onclick="empezar()">EMPEZAR</button>
+  </div>
+
+  <!-- Contenido del Portal de Empleos -->
+  <div class="contenido" id="pantallaContenido">
+    <div class="container" id="inicio">
+      <h2>Bienvenido a ADGB</h2>
+      <button onclick="mostrarAdministrador()">Eres el Administrador</button>
+      <button onclick="mostrarSolicitante()">Trabajo busca</button>
+    </div>
+
+    <div class="container" id="adminLogin" style="display:none;">
+      <h2>Acceso Administrador</h2>
+      <input type="password" id="adminPass" placeholder="Contraseña"><br>
+      <button onclick="validarAdmin()">Ingresar</button>
+    </div>
+
+    <div class="container" id="adminPanel" style="display:none;">
+      <h2>Bandeja de Solicitudes</h2>
+      <div id="solicitudes"></div>
+      <button onclick="eliminarSolicitudes()">Eliminar Todas</button>
+    </div>
+
+    <div class="container" id="formSolicitante" style="display:none;">
+      <h2>Solicitud de Empleo</h2>
+      <input type="text" placeholder="Nombre" id="nombre"><br>
+      <input type="number" placeholder="Edad" id="edad"><br>
+      <input type="text" placeholder="Escolaridad" id="escolaridad"><br>
+      <input type="tel" placeholder="Teléfono" id="telefono"><br>
+      <input type="text" placeholder="Último empleo" id="ultimoEmpleo"><br>
+      <input type="text" placeholder="Motivo de salida" id="motivoSalida"><br>
+      <button onclick="mostrarUbicacion()">Siguiente</button>
+    </div>
+
+    <div class="container" id="seleccionUbicacion" style="display:none;">
+      <h2>Selecciona tu Ubicación</h2>
+      <select id="ubicacion">
+        <option>Mazatlán</option>
+        <option>Saltillo</option>
+        <option>Salina Victoria</option>
+        <option>Chihuahua</option>
+        <option>Tijuana</option>
+        <option>Querétaro</option>
+      </select><br>
+      <button onclick="mostrarEmpresas()">Siguiente</button>
+    </div>
+
+    <div class="container" id="seleccionEmpresa" style="display:none;">
+      <h2>Selecciona una Empresa</h2>
+      <select id="empresa">
+        <option>Cimaco</option>
+        <option>Sigma</option>
+        <option>Oxxo</option>
+        <option>Liverpool</option>
+        <option>Hyundai</option>
+      </select><br>
+      <button onclick="enviarSolicitud()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    function empezar() {
+      document.getElementById('pantallaInicio').style.display = 'none';
+      document.getElementById('pantallaContenido').style.display = 'block';
+    }
+
+    function mostrarSolicitante() {
+      document.getElementById('inicio').style.display = 'none';
+      document.getElementById('formSolicitante').style.display = 'block';
+    }
+
+    function mostrarAdministrador() {
+      document.getElementById('inicio').style.display = 'none';
+      document.getElementById('adminLogin').style.display = 'block';
+    }
+
+    function validarAdmin() {
+      let password = document.getElementById('adminPass').value;
+      if (password === "Tecate89") {
+        document.getElementById('adminLogin').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        mostrarSolicitudes();
+      } else {
+        alert("Contraseña incorrecta");
+      }
+    }
+
+    function mostrarSolicitudes() {
+      let container = document.getElementById('solicitudes');
+      container.innerHTML = "";
+      let storedSolicitudes = JSON.parse(localStorage.getItem("solicitudes")) || [];
+      storedSolicitudes.forEach((solicitud, index) => {
+        let solicitudDiv = document.createElement('div');
+        solicitudDiv.classList.add('solicitud');
+        solicitudDiv.innerHTML = `
+          <p><strong>Fecha:</strong> ${solicitud.fecha}</p>
+          <p><strong>Nombre:</strong> ${solicitud.nombre}</p>
+          <p><strong>Edad:</strong> ${solicitud.edad}</p>
+          <p><strong>Escolaridad:</strong> ${solicitud.escolaridad}</p>
+          <p><strong>Teléfono:</strong> ${solicitud.telefono}</p>
+          <p><strong>Último empleo:</strong> ${solicitud.ultimoEmpleo}</p>
+          <p><strong>Motivo de salida:</strong> ${solicitud.motivoSalida}</p>
+          <p><strong>Ubicación:</strong> ${solicitud.ubicacion}</p>
+          <p><strong>Empresa:</strong> ${solicitud.empresa}</p>
+          <button class="basurero" onclick="eliminarSolicitud(${index})">🗑 Eliminar</button>
+        `;
+        container.appendChild(solicitudDiv);
+      });
+    }
+
+    function eliminarSolicitud(index) {
+      let stored = JSON.parse(localStorage.getItem("solicitudes")) || [];
+      stored.splice(index, 1);
+      localStorage.setItem("solicitudes", JSON.stringify(stored));
+      mostrarSolicitudes();
+    }
+
+    function eliminarSolicitudes() {
+      localStorage.removeItem("solicitudes");
+      mostrarSolicitudes();
+    }
+
+    function mostrarUbicacion() {
+      document.getElementById('formSolicitante').style.display = 'none';
+      document.getElementById('seleccionUbicacion').style.display = 'block';
+    }
+
+    function mostrarEmpresas() {
+      document.getElementById('seleccionUbicacion').style.display = 'none';
+      document.getElementById('seleccionEmpresa').style.display = 'block';
+    }
+
+    function enviarSolicitud() {
+      let nombre = document.getElementById('nombre').value;
+      let edad = document.getElementById('edad').value;
+      let escolaridad = document.getElementById('escolaridad').value;
+      let telefono = document.getElementById('telefono').value;
+      let ultimoEmpleo = document.getElementById('ultimoEmpleo').value;
+      let motivoSalida = document.getElementById('motivoSalida').value;
+      let ubicacion = document.getElementById('ubicacion').value;
+      let empresa = document.getElementById('empresa').value;
+      let fecha = new Date().toLocaleString();
+
+      if (nombre && edad && escolaridad && telefono && ultimoEmpleo && motivoSalida) {
+        let solicitud = { nombre, edad, escolaridad, telefono, ultimoEmpleo, motivoSalida, ubicacion, empresa, fecha };
+        let storedSolicitudes = JSON.parse(localStorage.getItem("solicitudes")) || [];
+        storedSolicitudes.push(solicitud);
+        localStorage.setItem("solicitudes", JSON.stringify(storedSolicitudes));
+        alert("Solicitud enviada con éxito.");
+        location.reload();
+      } else {
+        alert("Por favor, llena todos los campos.");
+      }
+    }
+  </script>
+
+</body>
+</html>
